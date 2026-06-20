@@ -273,7 +273,7 @@ class CF_Purge_Trigger {
                         return $matches[0];
                     }
 
-                    return rawurlencode( $replacement );
+                    return $replacement;
                 },
                 (string) $value
             );
@@ -320,7 +320,7 @@ class CF_Purge_Trigger {
         $value = null;
 
         if ( function_exists( 'get_field' ) ) {
-            $value = get_field( $placeholder, $post->ID, false );
+            $value = get_field( $placeholder, $post->ID, true );
         }
 
         if ( null === $value || false === $value || '' === $value ) {

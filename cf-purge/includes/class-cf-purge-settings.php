@@ -669,7 +669,7 @@ class CF_Purge_Settings {
         $masked_value = preg_replace_callback(
             '/\{([A-Za-z0-9_.:-]+)\}/',
             function ( array $matches ) use ( &$placeholders ): string {
-                $token                  = 'cfpurgeplaceholder' . count( $placeholders );
+                $token                  = 'cfpurgeplaceholder' . count( $placeholders ) . md5( $matches[0] );
                 $placeholders[ $token ] = $matches[0];
                 return $token;
             },
