@@ -287,7 +287,7 @@ class CF_Purge_Settings {
         $placeholders = [
             'prefixes' => "www.example.com/aktualnosci\nwww.example.com",
             'tags'     => "projects-listing\nhome",
-            'files'    => "https://www.example.com/aktualnosci\nhttps://www.example.com",
+            'files'    => "https://www.example.com/aktualnosci/{postId}\nhttps://www.example.com/{slug}",
         ];
         $current_mode = $rule['mode'] ?? 'prefixes';
         $placeholder  = $placeholders[ $current_mode ] ?? '';
@@ -336,6 +336,7 @@ class CF_Purge_Settings {
                         ><?php echo esc_textarea( $rule['values'] ); ?></textarea>
                         <p class="description">
                             <?php esc_html_e( 'Jedna wartość na linię.', 'cf-purge' ); ?>
+                            <?php esc_html_e( 'Możesz używać placeholderów, np. {postId}, {slug} lub {nazwa_pola_acf}.', 'cf-purge' ); ?>
                         </p>
                     </td>
                 </tr>
@@ -595,7 +596,7 @@ class CF_Purge_Settings {
                 switch ( $mode ) {
                     case 'files':
                         // Pełny URL ze schematem.
-                        $sanitized = esc_url_raw( $v );
+                        $sanitized = $this->sanitize_file_rule_value( $v );
                         if ( ! preg_match( '#^https?://#', $sanitized ) ) {
                             $has_warning = true;
                         }
@@ -655,6 +656,38 @@ class CF_Purge_Settings {
         }
 
         return $result;
+    }
+
+    /**
+     * Sanityzuje URL dla trybu files, zachowując placeholdery typu {postId}.
+     *
+     * @param string $value Wartość reguły.
+     * @return string
+     */
+    private function sanitize_file_rule_value( string $value ): string {
+        $placeholders = [];
+        $masked_value = preg_replace_callback(
+            CF_PURGE_PLACEHOLDER_PATTERN,
+            function ( array $matches ) use ( &$placeholders ): string {
+                $index                          = count( $placeholders );
+                $placeholder_token              = 'CF_PURGE_PLACEHOLDER_' . $index . '_' . $matches[1];
+                $placeholders[ $placeholder_token ] = $matches[0];
+                return $placeholder_token;
+            },
+            $value
+        );
+
+        if ( ! is_string( $masked_value ) ) {
+            return '';
+        }
+
+        $sanitized = esc_url_raw( $masked_value );
+
+        foreach ( $placeholders as $token => $placeholder ) {
+            $sanitized = str_replace( $token, $placeholder, $sanitized );
+        }
+
+        return $sanitized;
     }
 
     /**
@@ -789,7 +822,7 @@ class CF_Purge_Settings {
                 'placeholders'     => [
                     'prefixes' => "www.example.com/aktualnosci\nwww.example.com",
                     'tags'     => "projects-listing\nhome",
-                    'files'    => "https://www.example.com/aktualnosci\nhttps://www.example.com",
+                    'files'    => "https://www.example.com/aktualnosci/{postId}\nhttps://www.example.com/{slug}",
                 ],
             ],
         ] );

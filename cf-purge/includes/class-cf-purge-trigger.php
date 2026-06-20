@@ -213,10 +213,16 @@ class CF_Purge_Trigger {
         }
 
         foreach ( $post_type_rules as $rule ) {
-            $mode   = sanitize_key( $rule['mode'] ?? '' );
-            $values = is_array( $rule['values'] ) ? $rule['values'] : [];
+            $mode       = sanitize_key( $rule['mode'] ?? '' );
+            $raw_values = $rule['values'] ?? [];
+            $values     = is_array( $raw_values ) ? $raw_values : [];
 
             if ( ! in_array( $mode, [ 'tags', 'prefixes', 'files' ], true ) || empty( $values ) ) {
+                continue;
+            }
+
+            $values = $this->resolve_rule_values( $values, $post );
+            if ( empty( $values ) ) {
                 continue;
             }
 
@@ -241,6 +247,105 @@ class CF_Purge_Trigger {
             $result = $client->purge( $mode, $values );
             $this->logger->log( $post_id, $mode, $values, $result, false );
         }
+    }
+
+    /**
+     * Podmienia placeholdery w wartościach reguł danymi wpisu oraz polami ACF/meta.
+     *
+     * @param array    $values Wartości skonfigurowane w regule.
+     * @param \WP_Post $post   Obiekt wpisu.
+     * @return array<string>
+     */
+    private function resolve_rule_values( array $values, \WP_Post $post ): array {
+        $resolved_values = [];
+
+        foreach ( $values as $value ) {
+            if ( ! is_scalar( $value ) ) {
+                continue;
+            }
+
+            $resolved = preg_replace_callback(
+                CF_PURGE_PLACEHOLDER_PATTERN,
+                function ( array $matches ) use ( $post ): string {
+                    $replacement = $this->get_placeholder_value( $matches[1], $post );
+
+                    if ( null === $replacement ) {
+                        // Keep unknown placeholders visible in logs/dry-run to make configuration issues easier to spot.
+                        return $matches[0];
+                    }
+
+                    return $replacement;
+                },
+                (string) $value
+            );
+
+            if ( is_string( $resolved ) ) {
+                $resolved = trim( $resolved );
+                if ( '' !== $resolved ) {
+                    $resolved_values[] = $resolved;
+                }
+            }
+        }
+
+        return array_values( array_unique( $resolved_values ) );
+    }
+
+    /**
+     * Zwraca wartość pojedynczego placeholdera.
+     *
+     * Obsługiwane pola wpisu: {postId}, {id}, {slug}, {postSlug}, {postType}, {title}.
+     * Pozostałe nazwy są odczytywane jako pola ACF (jeśli ACF jest dostępny) lub post meta.
+     *
+     * @param string   $placeholder Nazwa placeholdera bez nawiasów klamrowych.
+     * @param \WP_Post $post        Obiekt wpisu.
+     * @return string|null
+     */
+    private function get_placeholder_value( string $placeholder, \WP_Post $post ): ?string {
+        switch ( $placeholder ) {
+            case 'postId':
+            case 'id':
+            case 'ID':
+                return (string) $post->ID;
+            case 'slug':
+            case 'postSlug':
+            case 'post_name':
+                return (string) $post->post_name;
+            case 'postType':
+            case 'post_type':
+                return (string) $post->post_type;
+            case 'title':
+            case 'postTitle':
+                return get_the_title( $post );
+        }
+
+        $value       = null;
+        $value_found = false;
+
+        if ( function_exists( 'get_field_object' ) ) {
+            $field = get_field_object( $placeholder, $post->ID );
+            if ( is_array( $field ) && array_key_exists( 'value', $field ) ) {
+                $field_value = $field['value'];
+                if ( is_scalar( $field_value ) ) {
+                    $value       = $field_value;
+                    $value_found = true;
+                }
+            }
+        }
+
+        if ( ! $value_found ) {
+            $value = get_post_meta( $post->ID, $placeholder, true );
+        }
+
+        if ( is_bool( $value ) ) {
+            return $value ? '1' : '0';
+        }
+
+        if ( is_scalar( $value ) && '' !== (string) $value ) {
+            $sanitized = sanitize_text_field( (string) $value );
+            return '' !== $sanitized ? $sanitized : null;
+        }
+
+        return null;
     }
 
     /**
