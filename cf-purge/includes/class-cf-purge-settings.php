@@ -11,7 +11,6 @@ class CF_Purge_Settings {
     private const OPTION_GROUP     = 'cf_purge_options';
     private const MIN_TOKEN_LENGTH = 20;
     private const MAX_TOKEN_LENGTH = 200;
-    private const PLACEHOLDER_PATTERN = '/\{([A-Za-z0-9_.:-]+)\}/';
 
     /** @var CF_Purge_Logger */
     private CF_Purge_Logger $logger;
@@ -668,10 +667,10 @@ class CF_Purge_Settings {
     private function sanitize_file_rule_value( string $value ): string {
         $placeholders = [];
         $masked_value = preg_replace_callback(
-            self::PLACEHOLDER_PATTERN,
+            CF_PURGE_PLACEHOLDER_PATTERN,
             function ( array $matches ) use ( &$placeholders ): string {
                 $index                  = count( $placeholders );
-                $token                  = 'cfpurgeplaceholder' . $index . hash( 'sha256', $matches[0] . $index );
+                $token                  = 'cfpurgeplaceholder' . $index . 'x';
                 $placeholders[ $token ] = $matches[0];
                 return $token;
             },

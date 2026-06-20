@@ -7,8 +7,6 @@ defined( 'ABSPATH' ) || exit;
  */
 class CF_Purge_Trigger {
 
-    private const PLACEHOLDER_PATTERN = '/\{([A-Za-z0-9_.:-]+)\}/';
-
     /** @var CF_Purge_Logger */
     private CF_Purge_Logger $logger;
 
@@ -267,7 +265,7 @@ class CF_Purge_Trigger {
             }
 
             $resolved = preg_replace_callback(
-                self::PLACEHOLDER_PATTERN,
+                CF_PURGE_PLACEHOLDER_PATTERN,
                 function ( array $matches ) use ( $post ): string {
                     $replacement = $this->get_placeholder_value( $matches[1], $post );
 
@@ -328,7 +326,9 @@ class CF_Purge_Trigger {
                 $value       = $field['value'];
                 $value_found = true;
             }
-        } elseif ( function_exists( 'get_field' ) ) {
+        }
+
+        if ( ! $value_found && function_exists( 'get_field' ) ) {
             $value = get_field( $placeholder, $post->ID );
             if ( null !== $value && false !== $value && '' !== $value ) {
                 $value_found = true;
