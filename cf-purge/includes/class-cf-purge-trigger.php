@@ -10,7 +10,12 @@ class CF_Purge_Trigger {
     /** @var CF_Purge_Logger */
     private CF_Purge_Logger $logger;
 
-    /** @var callable(): CF_Purge_Client|null Note: `callable` is not a valid PHP property type. */
+    /**
+     * Factory callable that returns a CF_Purge_Client or null.
+     * Note: `callable` pseudo-type is explicitly excluded from PHP typed property declarations.
+     *
+     * @var callable(): CF_Purge_Client|null
+     */
     private $client_factory;
 
     /**

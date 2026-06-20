@@ -534,7 +534,7 @@ class CF_Purge_Settings {
             return get_option( 'cf_purge_api_token', '' );
         }
 
-        // Walidacja długości: tokeny Cloudflare mają zazwyczaj 40 znaków.
+        // Validate token length: allow range to accommodate varying Cloudflare token formats.
         if ( strlen( $value ) < self::MIN_TOKEN_LENGTH || strlen( $value ) > self::MAX_TOKEN_LENGTH ) {
             add_settings_error(
                 'cf_purge_api_token',
