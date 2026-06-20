@@ -78,12 +78,12 @@
                     $result.append('<br><span style="color:#b45309;">' + data.notice + '</span>');
                 }
             } else {
-                var errMsg = (response.data && response.data.message) ? response.data.message : 'Unknown error';
+                var errMsg = (response.data && response.data.message) ? response.data.message : cfPurge.i18n.unknownError;
                 $result.text(cfPurge.i18n.error + ' ' + errMsg).css('color', '#a00');
             }
         })
         .fail(function () {
-            $result.text(cfPurge.i18n.error + ' ' + 'Request failed').css('color', '#a00');
+            $result.text(cfPurge.i18n.error + ' ' + cfPurge.i18n.requestFailed).css('color', '#a00');
         })
         .always(function () {
             $button.prop('disabled', false);

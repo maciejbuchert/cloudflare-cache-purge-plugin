@@ -7,8 +7,10 @@ defined( 'ABSPATH' ) || exit;
  */
 class CF_Purge_Settings {
 
-    private const PAGE_SLUG   = 'cf-purge-settings';
-    private const OPTION_GROUP = 'cf_purge_options';
+    private const PAGE_SLUG        = 'cf-purge-settings';
+    private const OPTION_GROUP     = 'cf_purge_options';
+    private const MIN_TOKEN_LENGTH = 20;
+    private const MAX_TOKEN_LENGTH = 200;
 
     /** @var CF_Purge_Logger */
     private CF_Purge_Logger $logger;
@@ -502,7 +504,7 @@ class CF_Purge_Settings {
                                         }
                                     }
                                 }
-                                echo implode( '<br>', $errors ); // phpcs:ignore WordPress.Security.EscapeOutput -- already escaped above.
+                                echo wp_kses( implode( '<br>', $errors ), [ 'br' => [] ] );
                                 ?>
                             </td>
                         </tr>
@@ -533,7 +535,7 @@ class CF_Purge_Settings {
         }
 
         // Walidacja długości: tokeny Cloudflare mają zazwyczaj 40 znaków.
-        if ( strlen( $value ) < 20 || strlen( $value ) > 200 ) {
+        if ( strlen( $value ) < self::MIN_TOKEN_LENGTH || strlen( $value ) > self::MAX_TOKEN_LENGTH ) {
             add_settings_error(
                 'cf_purge_api_token',
                 'invalid_token',
@@ -786,6 +788,8 @@ class CF_Purge_Settings {
                 'testing'          => esc_html__( 'Testowanie…', 'cf-purge' ),
                 'connected'        => esc_html__( 'Połączono:', 'cf-purge' ),
                 'error'            => esc_html__( 'Błąd:', 'cf-purge' ),
+                'unknownError'     => esc_html__( 'Nieznany błąd.', 'cf-purge' ),
+                'requestFailed'    => esc_html__( 'Żądanie nie powiodło się.', 'cf-purge' ),
                 'confirmClearLog'  => esc_html__( 'Czy na pewno wyczyścić historię purge?', 'cf-purge' ),
                 'logCleared'       => esc_html__( 'Historia wyczyszczona.', 'cf-purge' ),
                 'placeholders'     => [

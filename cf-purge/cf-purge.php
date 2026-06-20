@@ -20,7 +20,7 @@ define( 'CF_PURGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_FILE', __FILE__ );
 
-// Autoloader — prosta PSR-4-like rejestracja.
+// Simple PSR-4-like autoloader registration.
 spl_autoload_register( function ( string $class_name ): void {
     $prefix = 'CF_Purge_';
     if ( strpos( $class_name, $prefix ) !== 0 ) {
