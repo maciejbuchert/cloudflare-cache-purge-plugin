@@ -4,7 +4,7 @@ Tags: cloudflare, cache, purge, headless, next.js
 Requires at least: 6.0
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,7 @@ gdzie purge dotyczy URL-i / tagów frontendu, a nie permalinków WordPressa.
 * Tryb dry-run (tylko logowanie, bez wysyłki)
 * Historia purge (opcjonalna)
 * Przycisk „Testuj połączenie" z wykrywaniem planu Cloudflare
+* Placeholdery w wartościach reguł, np. `{postId}`, `{slug}` i pola ACF/meta
 
 = Wymagania Cloudflare =
 
@@ -45,6 +46,12 @@ Stała ma pierwszeństwo nad wartością zapisaną w ustawieniach.
 1. Wgraj folder `cf-purge` do katalogu `/wp-content/plugins/`.
 2. Aktywuj plugin w panelu „Pluginy".
 3. Przejdź do Ustawienia → Cloudflare Purge i skonfiguruj API Token, Zone ID oraz reguły.
+
+== Placeholdery w regułach ==
+
+W wartościach reguł możesz używać danych zapisywanego wpisu, np. `https://example.com/{postId}`
+lub `https://example.com/{slug}`. Dostępne są też pola ACF/meta przez nazwę pola, np.
+`https://example.com/{custom_slug}`.
 
 == Scenariusze testowe ==
 
@@ -78,6 +85,9 @@ Stała ma pierwszeństwo nad wartością zapisaną w ustawieniach.
 11. **Błąd API:** zły token → log zawiera `code` i `message` z Cloudflare, brak fatal error.
 
 == Changelog ==
+
+= 1.1.0 =
+* Dodano obsługę placeholderów w wartościach reguł purge.
 
 = 1.0.0 =
 * Pierwsza wersja pluginu.

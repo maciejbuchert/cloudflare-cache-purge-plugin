@@ -3,7 +3,7 @@
  * Plugin Name:       Cloudflare Cache Purge
  * Plugin URI:        https://github.com/maciejbuchert/cloudflare-cache-purge-plugin
  * Description:       Precyzyjny purge cache Cloudflare per typ treści — dla setupów headless (WordPress + Next.js).
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Maciej Buchert
@@ -15,7 +15,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
-define( 'CF_PURGE_VERSION', '1.0.0' );
+define( 'CF_PURGE_VERSION', '1.1.0' );
 define( 'CF_PURGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_FILE', __FILE__ );
