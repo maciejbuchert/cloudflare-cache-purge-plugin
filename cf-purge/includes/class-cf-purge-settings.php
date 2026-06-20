@@ -582,16 +582,12 @@ class CF_Purge_Settings {
                 continue;
             }
 
-            // Parsuj textarea → tablica wartości.
+            // Parsuj textarea → tablica wartości (obsługa \r\n, \r, \n).
             $values = array_filter(
-                array_map( 'trim', explode( "\n", $raw_values ) ),
+                array_map( 'trim', preg_split( '/\r\n|\r|\n/', $raw_values ) ),
                 fn( $v ) => $v !== ''
             );
             $values = array_values( $values );
-
-            if ( empty( $values ) ) {
-                continue;
-            }
 
             // Sanityzuj wartości zależnie od trybu.
             $sanitized_values = [];
