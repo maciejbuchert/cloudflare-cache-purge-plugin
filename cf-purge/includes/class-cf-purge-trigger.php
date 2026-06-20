@@ -328,14 +328,7 @@ class CF_Purge_Trigger {
             }
         }
 
-        if ( ! $value_found && function_exists( 'get_field' ) ) {
-            $value = get_field( $placeholder, $post->ID );
-            if ( null !== $value && false !== $value && '' !== $value ) {
-                $value_found = true;
-            }
-        }
-
-        if ( ! $value_found || null === $value || '' === $value ) {
+        if ( ! $value_found ) {
             $value = get_post_meta( $post->ID, $placeholder, true );
         }
 

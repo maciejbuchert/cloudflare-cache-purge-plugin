@@ -669,10 +669,10 @@ class CF_Purge_Settings {
         $masked_value = preg_replace_callback(
             CF_PURGE_PLACEHOLDER_PATTERN,
             function ( array $matches ) use ( &$placeholders ): string {
-                $index                  = count( $placeholders );
-                $token                  = 'cfpurgeplaceholder' . $index . 'x';
-                $placeholders[ $token ] = $matches[0];
-                return $token;
+                $index                          = count( $placeholders );
+                $placeholder_token              = '__CF_PURGE_PH_' . $index . '__';
+                $placeholders[ $placeholder_token ] = $matches[0];
+                return $placeholder_token;
             },
             $value
         );
