@@ -670,7 +670,7 @@ class CF_Purge_Settings {
             CF_PURGE_PLACEHOLDER_PATTERN,
             function ( array $matches ) use ( &$placeholders ): string {
                 $index                          = count( $placeholders );
-                $placeholder_token              = 'CF_PURGE_PLACEHOLDER_' . $index;
+                $placeholder_token              = 'CF_PURGE_PLACEHOLDER_' . $index . '_' . $matches[1];
                 $placeholders[ $placeholder_token ] = $matches[0];
                 return $placeholder_token;
             },

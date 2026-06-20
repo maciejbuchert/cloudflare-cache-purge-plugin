@@ -341,7 +341,8 @@ class CF_Purge_Trigger {
         }
 
         if ( is_scalar( $value ) && '' !== (string) $value ) {
-            return (string) $value;
+            $sanitized = sanitize_text_field( (string) $value );
+            return '' !== $sanitized ? $sanitized : null;
         }
 
         return null;
