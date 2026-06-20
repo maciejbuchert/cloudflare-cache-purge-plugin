@@ -270,6 +270,7 @@ class CF_Purge_Trigger {
                     $replacement = $this->get_placeholder_value( $matches[1], $post );
 
                     if ( null === $replacement ) {
+                        // Zachowaj nieznany placeholder, aby było widać błędną konfigurację w logu/dry-run.
                         return $matches[0];
                     }
 
@@ -323,8 +324,11 @@ class CF_Purge_Trigger {
         if ( function_exists( 'get_field_object' ) ) {
             $field = get_field_object( $placeholder, $post->ID );
             if ( is_array( $field ) && array_key_exists( 'value', $field ) ) {
-                $value       = $field['value'];
-                $value_found = true;
+                $field_value = $field['value'];
+                if ( is_scalar( $field_value ) || null === $field_value || '' === $field_value ) {
+                    $value       = $field_value;
+                    $value_found = true;
+                }
             }
         }
 

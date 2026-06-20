@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
 define( 'CF_PURGE_VERSION', '1.1.0' );
-define( 'CF_PURGE_PLACEHOLDER_PATTERN', '/\{([A-Za-z0-9_.:-]+)\}/' );
+define( 'CF_PURGE_PLACEHOLDER_PATTERN', '/\{([A-Za-z0-9_]+)\}/' );
 define( 'CF_PURGE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CF_PURGE_PLUGIN_FILE', __FILE__ );
