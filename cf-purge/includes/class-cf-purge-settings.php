@@ -63,7 +63,6 @@ class CF_Purge_Settings {
         // API Token.
         register_setting( self::OPTION_GROUP, 'cf_purge_api_token', [
             'sanitize_callback' => [ $this, 'sanitize_api_token' ],
-            'default'           => '',
         ] );
         add_settings_field(
             'cf_purge_api_token',
@@ -76,7 +75,6 @@ class CF_Purge_Settings {
         // Zone ID.
         register_setting( self::OPTION_GROUP, 'cf_purge_zone_id', [
             'sanitize_callback' => 'sanitize_text_field',
-            'default'           => '',
         ] );
         add_settings_field(
             'cf_purge_zone_id',
@@ -95,8 +93,8 @@ class CF_Purge_Settings {
         );
 
         register_setting( self::OPTION_GROUP, 'cf_purge_rules', [
+            'type'              => 'array',
             'sanitize_callback' => [ $this, 'sanitize_rules' ],
-            'default'           => [],
         ] );
         add_settings_field(
             'cf_purge_rules',
@@ -142,8 +140,8 @@ class CF_Purge_Settings {
 
         // Statusy wyzwalające.
         register_setting( self::OPTION_GROUP, 'cf_purge_trigger_statuses', [
+            'type'              => 'array',
             'sanitize_callback' => [ $this, 'sanitize_trigger_statuses' ],
-            'default'           => [ 'publish' ],
         ] );
         add_settings_field(
             'cf_purge_trigger_statuses',
